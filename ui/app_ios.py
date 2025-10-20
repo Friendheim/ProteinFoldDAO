@@ -312,20 +312,41 @@ class BlockchainManager:
                 {
                     "id": 1,
                     "submitter": "0x742d35Cc6634C0532925a3b8D2C5C5C5C5C5C5C5",
+                    "protein_name": "绿色荧光蛋白 (GFP)",
+                    "organism": "Aequorea victoria",
                     "sequence": "MSKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTGKLPVPWPTLVTTFSYGVQCFSRYPDHMKQHDFFKSAMPEGYVQERTIFFKDDGNYKTRAEVKFEGDTLVNRIELKGIDFKEDGNILGHKLEYNYNSHNVYIMADKQKNGIKVNFKIRHNIEDGSVQLADHYQQNTPIGDGPVLLPDNHYLSTQSALSKDPNEKRDHMVLLEFVTAAGITHGMDELYK",
                     "stabilityScore": 720,
                     "voteCount": 15,
                     "timestamp": int(time.time()) - 3600,
-                    "isValid": True
+                    "isValid": True,
+                    "description": "来自水母的荧光蛋白，在生物成像中广泛应用",
+                    "function": "荧光标记蛋白，用于细胞生物学研究"
                 },
                 {
                     "id": 2,
                     "submitter": "0x1234567890123456789012345678901234567890",
-                    "sequence": "MKLLILTCLVAVALARPKHPIKHQGLPQEVLNENLLRFFVAPFPEVFGKEKVNELKKKDFGFIEQEGDLIVIDVPGNIQKPLGDFGDQMLRIAVKTEGALMQCKLMKQ",
+                    "protein_name": "胰岛素",
+                    "organism": "Homo sapiens",
+                    "sequence": "MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN",
                     "stabilityScore": 680,
                     "voteCount": 8,
                     "timestamp": int(time.time()) - 7200,
-                    "isValid": True
+                    "isValid": True,
+                    "description": "调节血糖水平的重要激素",
+                    "function": "促进葡萄糖摄取和糖原合成"
+                },
+                {
+                    "id": 3,
+                    "submitter": "0x9b3d35Cc6634C0532925a3b8D2C5C5C5C5C5C5C5C",
+                    "protein_name": "p53肿瘤抑制蛋白",
+                    "organism": "Homo sapiens",
+                    "sequence": "MEEPQSDPSVEPPLSQETFSDLWKLLPENNVLSPLPSQAMDDLMLSPDDIEQWFTEDPGPDEAPRMPEAAPPVAPAPAAPTPAAPAPAPSWPLSSSVPSQKTYQGSYGFRLGFLHSGTAKSVTCTYSPALNKMFCQLAKTCPVQLWVDSTPPPGTRVRAMAIYKQSQHMTEVVRRCPHHERCSDSDGLAPPQHLIRVEGNLRVEYLDDRNTFRHSVVVPYEPPEVGSDCTTIHYNYMCNSSCMGGMNRRPILTIITLEDSSGNLLGRNSFEVRVCACPGRDRRTEEENLRKKGEPHHELPPGSTKRALPNNTSSSPQPKKKPLDGEYFTLQIRGRERFEMFRELNEALELKDAQAGKEPGGSRAHSSHLKSKKGQSTSRHKKLMFKTEGPDSD",
+                    "stabilityScore": 750,
+                    "voteCount": 23,
+                    "timestamp": int(time.time()) - 1800,
+                    "isValid": True,
+                    "description": "关键的肿瘤抑制蛋白，调节细胞周期和凋亡",
+                    "function": "DNA损伤响应和细胞凋亡调控"
                 }
             ]
         if 'user_predictions' not in st.session_state:
@@ -1124,11 +1145,17 @@ def main():
             """, unsafe_allow_html=True)
         else:
             for pred in predictions:
+                # 获取蛋白质信息
+                protein_name = pred.get('protein_name', f"蛋白质 #{pred['id']}")
+                organism = pred.get('organism', '未知生物体')
+                description = pred.get('description', '蛋白质折叠预测')
+                function = pred.get('function', '功能未知')
+                
                 # iOS风格的预测卡片
                 st.markdown(f"""
                 <div class="prediction-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                        <h4 style="margin: 0; color: #1d1d1f; font-weight: 600;">预测 #{pred['id']}</h4>
+                        <h4 style="margin: 0; color: #1d1d1f; font-weight: 600;">🧬 {protein_name}</h4>
                         <div style="display: flex; gap: 16px;">
                             <span style="color: #34C759; font-weight: 600;">🎯 {pred['stabilityScore']/1000:.3f}</span>
                             <span style="color: #007AFF; font-weight: 600;">🗳️ {pred['voteCount']}</span>
@@ -1137,13 +1164,19 @@ def main():
                     
                     <div style="margin-bottom: 16px;">
                         <div style="color: #6e6e73; font-size: 0.9rem; margin-bottom: 8px;">
-                            <strong>提交者:</strong> <code style="background: rgba(0,0,0,0.05); padding: 2px 8px; border-radius: 6px;">{pred['submitter'][:10]}...{pred['submitter'][-6:]}</code>
+                            <strong>生物体:</strong> {organism}
                         </div>
                         <div style="color: #6e6e73; font-size: 0.9rem; margin-bottom: 8px;">
                             <strong>序列长度:</strong> {len(pred['sequence'])} 氨基酸
                         </div>
-                        <div style="color: #6e6e73; font-size: 0.9rem; margin-bottom: 12px;">
+                        <div style="color: #6e6e73; font-size: 0.9rem; margin-bottom: 8px;">
                             <strong>提交时间:</strong> {datetime.fromtimestamp(pred['timestamp']).strftime('%Y-%m-%d %H:%M:%S')}
+                        </div>
+                        <div style="color: #6e6e73; font-size: 0.9rem; margin-bottom: 8px;">
+                            <strong>描述:</strong> {description}
+                        </div>
+                        <div style="color: #6e6e73; font-size: 0.9rem; margin-bottom: 12px;">
+                            <strong>功能:</strong> {function}
                         </div>
                     </div>
                     
@@ -1157,10 +1190,36 @@ def main():
                 </div>
                 """, unsafe_allow_html=True)
 
+                # 投票区域 - iOS风格
+                with st.expander(f"🗳️ 对 {protein_name} 进行投票", expanded=False):
+                    st.markdown("**请为这个蛋白质预测投票并说明理由：**")
+                    
+                    # 投票选项
+                    vote_choice = st.radio(
+                        "您的投票选择：",
+                        ["👍 支持", "👎 反对", "🤔 中立"],
+                        key=f"vote_choice_{pred['id']}"
+                    )
+                    
+                    # 投票说明
+                    vote_reason = st.text_area(
+                        "请说明您的投票理由：",
+                        placeholder="例如：这个预测的稳定性分数合理，序列分析准确...",
+                        key=f"vote_reason_{pred['id']}"
+                    )
+                    
+                    # 提交投票按钮
+                    if st.button(f"提交投票", key=f"submit_vote_{pred['id']}", type="primary"):
+                        if vote_reason.strip():
+                            st.success(f"✅ 投票成功！您选择了 {vote_choice}，理由：{vote_reason}")
+                            st.info("💡 您的投票已记录到区块链，感谢参与社区治理！")
+                        else:
+                            st.warning("⚠️ 请填写投票理由")
+                
                 # 交互按钮行（统一宽度）
                 c1, c2, _ = st.columns([1, 1, 6])
                 with c1:
-                    if st.button("👍 投票", key=f"vote_{pred['id']}", use_container_width=True):
+                    if st.button("👍 快速投票", key=f"quick_vote_{pred['id']}", use_container_width=True):
                         ok = blockchain.vote_prediction_simulation(pred['id'])
                         if ok:
                             st.success("已投票")

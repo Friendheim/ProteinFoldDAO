@@ -7,8 +7,13 @@
 
 import streamlit as st
 import pandas as pd
-from database_manager import ProteinDatabaseManager, ProteinInfo
+import sys
+import os
 import time
+
+# 添加AI模块路径
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'ai'))
+from database_manager import ProteinDatabaseManager, ProteinInfo
 
 class DatabaseSearchInterface:
     """数据库搜索界面"""
